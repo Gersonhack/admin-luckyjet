@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // Configurações do sistema
 const ADMIN_EMAIL = "root@gmail.com"; // Altere para o email do administrador
-const ADMIN_PASSWORD = "admin123"; // Altere para a senha do administrador
+const ADMIN_PASSWORD = "admin123"; // Altere para a senha bbdo administrador
 
 // Constantes do sistema
 const USER_STATUS = {
