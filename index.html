@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Diom Aviator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Login Section -->
+    <div id="login-section" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2 class="login-title">Painel Administrativo</h2>
+                <p class="login-subtitle">Diom Aviator </p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="admin-email-input" class="form-label">Email Administrador</label>
+                    <input type="email" 
+                           id="admin-email-input" 
+                           class="form-input" 
+                           placeholder="email@exemplo.com"
+                           required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-password-input" class="form-label">Senha</label>
+                    <input type="password" 
+                           id="admin-password-input" 
+                           class="form-input" 
+                           placeholder="Digite sua senha"
+                           required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-full">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar no Painel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="admin-container hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <div class="logo-text">Admin System</div>
+                        <div class="logo-subtext">Diom Aviator</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">Principal</div>
+                    <div class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Usuários</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Configurações</div>
+                    <div class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Configurações</span>
+                    </div>
+                    <div class="nav-item" data-section="logs">
+                        <i class="fas fa-history"></i>
+                        <span>Logs do Sistema</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Relatórios</div>
+                    <div class="nav-item" data-section="reports">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Relatórios</span>
+                    </div>
+                    <div class="nav-item" data-section="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Análises</span>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="admin-avatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name">Administrador</div>
+                        <div class="user-email" id="admin-email">admin@exemplo.com</div>
+                    </div>
+                    <button class="btn-icon" id="logout-btn" title="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Gerenciamento de Usuários</h1>
+                    <div class="breadcrumb">
+                        <span>Home</span>
+                        <i class="fas fa-chevron-right mx-2" style="font-size: 0.75rem;"></i>
+                        <span>Usuários</span>
+                    </div>
+                </div>
+                
+                <div class="top-bar-actions">
+                    <button class="btn-icon" id="refresh-btn" title="Atualizar dados">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="btn-icon hidden" id="notifications-btn" title="Notificações">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Statistics Section -->
+                <section id="dashboard-section">
+                    <div class="stats-grid">
+                        <div class="stat-card total-users" data-filter="all">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h3 id="total-users-count">0</h3>
+                                    <p>Total de Usuários</p>
+                                    <div class="stat-trend trend-down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>15%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card premium-users" data-filter="premium">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h3 id="premium-users-count">0</h3>
+                                    <p>Assinantes Premium permanente </p>
+                                    <div class="stat-trend trend-down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>12%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card expired-users" data-filter="expired">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h3 id="expired-users-count">0</h3>
+                                    <p>Contas Expiradas</p>
+                                    <div class="stat-trend trend-down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>2%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card no-access-users" data-filter="no-access">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h3 id="no-access-users-count">0</h3>
+                                    <p>Sem Acesso</p>
+                                    <div class="stat-trend">
+                                        <span>0%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Search and Actions Section -->
+                <section class="search-section">
+                    <div class="search-bar">
+                        <input type="text" 
+                               class="search-input" 
+                               placeholder="Buscar por nome, email ou ID..."
+                               data-search-input>
+                        <button class="btn btn-secondary hidden" id="filters-btn" data-action="show-filters">
+                            <i class="fas fa-filter"></i>
+                            Filtros
+                        </button>
+                        <button class="btn btn-primary" id="add-user-btn" data-action="add-user">
+                            <i class="fas fa-plus"></i>
+                            Adicionar Usuário
+                        </button>
+                        <button class="btn-icon hidden" id="export-btn" data-action="export-data" title="Exportar dados">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Users Table Section -->
+                <section class="table-section">
+                    <div class="table-header">
+                        <h3 class="table-title">Usuários Cadastrados</h3>
+                        <div class="table-actions">
+                            <button class="btn-icon" id="view-toggle" title="Alternar visualização">
+                                <i class="fas fa-table"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>USUÁRIO</th>
+                                    <th>STATUS</th>
+                                    <th>PLANO</th>
+                                    <th>ÚLTIMO ACESSO</th>
+                                    <th>AÇÕES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Usuários serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            <span data-pagination-info>Mostrando 0 a 0 de 0 resultados</span>
+                        </div>
+                        <div class="pagination-buttons" data-pagination>
+                            <!-- Botões de paginação serão gerados aqui -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+    </div>
+
+    <!-- Messages -->
+    <div id="message" class="message"></div>
+
+    <!-- Success Modal -->
+    <div class="success-modal hidden" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-check-circle"></i>
+                    Usuário Cadastrado com sso!
+                </h3>
+                 <button class="modal-close" id="modal-close-btn">
+     close×</button>
+            </div>
+            <div class="modal-body">
+                <div class="user-template" id="user-template-content"></div>
+                <button class="btn btn-primary w-full" id="modal-close-bt">
+                    <i class="fas fa-copy"></i>
+                    Copiar Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="/db.js"></script>
+    <script src="/api.js"></script>
+    
+    <script>
+        // Adicionar algumas funcionalidades básicas de UI
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const html = document.documentElement;
+                    const currentTheme = html.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    const icon = document.getElementById('theme-icon');
+                    
+                    html.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('admin-theme', newTheme);
+                    
+                    if (newTheme === 'dark') {
+                        icon.className = 'fas fa-moon';
+                    } else {
+                        icon.className = 'fas fa-sun';
+                    }
+                });
+            }
+            
+            // Load saved theme
+            const savedTheme = localStorage.getItem('admin-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const icon = document.getElementById('theme-icon');
+            if (savedTheme === 'light' && icon) {
+                icon.className = 'fas fa-sun';
+            }
+            
+            // Navigation
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Mostrar/ocultar seções baseado no data-section
+                    const section = this.dataset.section;
+                    const sections = document.querySelectorAll('section[id$="-section"]');
+                    sections.forEach(sec => {
+                        if (sec.id === `${section}-section`) {
+                            sec.style.display = 'block';
+                        } else {
+                            sec.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Refresh button
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    if (window.adminPanel && window.adminPanel.refreshData) {
+                        window.adminPanel.refreshData();
+                    }
+                });
+            }
+            
+            // Add user button
+            const addUserBtn = document.getElementById('add-user-btn');
+            if (addUserBtn) {
+                addUserBtn.addEventListener('click', function() {
+                    if (window.adminPanel && window.adminPanel.showAddUserModal) {
+                        window.adminPanel.showAddUserModal();
+                    }
+                });
+            }
+            
+            // Filters button
+            const filtersBtn = document.getElementById('filters-btn');
+            if (filtersBtn) {
+                filtersBtn.addEventListener('click', function() {
+                    if (window.adminPanel && window.adminPanel.showFiltersModal) {
+                        window.adminPanel.showFiltersModal();
+                    }
+                });
+            }
+            
+            // Export button
+            const exportBtn = document.getElementById('export-btn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    if (window.adminPanel && window.adminPanel.exportUsersData) {
+                        window.adminPanel.exportUsersData();
+                    }
+                });
+            }
+            
+            // View toggle
+            const viewToggle = document.getElementById('view-toggle');
+            if (viewToggle) {
+                viewToggle.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('fa-table')) {
+                        icon.className = 'fas fa-list';
+                        this.title = 'Visualização em lista';
+                    } else {
+                        icon.className = 'fas fa-table';
+                        this.title = 'Visualização em tabela';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
