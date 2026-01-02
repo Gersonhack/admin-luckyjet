@@ -1030,7 +1030,7 @@ class AdminPanel {
     const planName = ACCESS_PLANS[userData.plan]?.name || userData.plan;
     
            
-           const template = `Acesso robô Diom Systems 
+           const template = `Acesso robô Diom Systems luckyJet 
 ╭━━•𖧹꧁᭼⸼◍ཻꢀ᮪⸱ᨗᨗᨗ🛸⸱ᨗᨗᨗꢀ᮪ཻ◍⸼᭼꧂𖧹•━━╮
 📧 E-mail: ${userData.email}
 🗝️ Senha: ${userData.password}
