@@ -1017,18 +1017,76 @@ class AdminPanel {
             // Relogar como admin
             await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
 
-            // Mostrar modal de sucesso
-            this.showSuccessModal(userData);
 
             // Recarregar dados
             await this.loadAllUsers();
+            // Mostrar modal de sucesso
+           // this.showSuccessModal(userData);
+       //    const expirationDate = Utils.calculateExpirationDate(userData.plan);
+    const expirationText = expirationDate ?
+        Utils.formatDateShort(expirationDate) :
+        'Nunca (Permanente)';
+    
+    const planName = ACCESS_PLANS[userData.plan]?.name || userData.plan;
+    
+           
+           const template = `Acesso robô Diom Systems 
+╭━━•𖧹꧁᭼⸼◍ཻꢀ᮪⸱ᨗᨗᨗ🛸⸱ᨗᨗᨗꢀ᮪ཻ◍⸼᭼꧂𖧹•━━╮
+📧 E-mail: ${userData.email}
+🗝️ Senha: ${userData.password}
+📊 Acesso: ${planName}
+🕒 Expira: ${expirationText}
+🌐 Site: https://diomsystems-luckyjet.netlify.app
+╰━━•𖧹꧁᭼⸼◍ཻꢀ᮪⸱ᨗᨗᨗ🛸⸱ᨗᨗᨗꢀ᮪ཻ◍⸼᭼꧂𖧹•━━╯
+Obrigada✅❤️`;
+
+    // Criar HTML do modal com SweetAlert2
+    const htmlContent = `
+        <div style="text-align: left; background-color: var(--bg-card); padding: 10px; border-radius: 8px;">
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: var(--text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.5em;"></i>
+                    Usuário Cadastrado com Sucesso!
+                </h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em; margin: 0;">
+                    Copie o template abaixo e envie ao usuário
+                </p>
+            </div>
+            
+            <div style="background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 0.85em; color: var(--text-primary); white-space: pre-wrap; word-break: break-word; max-height: 300px; overflow-y: auto;" id="template-display">
+${template}
+            </div>
+            
+
+        </div>
+    `;
+    
+    
+    
+    
+    
+    
+
+           
+           
 
             Swal.fire({
                 icon: 'success',
-                title: 'Sucesso!',
+                title: htmlContent,
                 text: 'Usuário criado com sucesso',
-                timer: 2000,
-                showConfirmButton: false,
+                customClass: {
+        popup: 'rounded-2xl shadow-2xl border border-gray-700',
+        title: 'text-2xl font-bold mb-4 text-white',
+        confirmButton: 'bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors',
+        closeButton: 'text-gray-400 hover:text-white'
+    },
+    showCloseButton: true,
+    showConfirmButton: true,
+    confirmButtonText: 'Fechar',
+    confirmButtonColor: '#7c3aed',
+    width: '600px',
+    buttonsStyling: true,
+    focusConfirm: false,
                 background: 'var(--bg-card)',
                 color: 'var(--text-primary)'
             });
@@ -1074,7 +1132,25 @@ class AdminPanel {
         }
     }
 
-    showSuccessModal(userData) {
+    /**
+ * FUNÇÃO CORRIGIDA: showSuccessModal
+ * 
+ * PROBLEMAS IDENTIFICADOS NO CÓDIGO ANTERIOR:
+ * 1. IDs de botões inconsistentes (modal-close-btn vs modal-close-bt)
+ * 2. ID de botão copiar não existia (copy-template-btn)
+ * 3. Modal criado manualmente em vez de usar SweetAlert2
+ * 4. Evento de clique no botão copiar não funcionava
+ * 5. Lógica de fechamento confusa
+ * 
+ * SOLUÇÃO:
+ * Usar SweetAlert2 para criar um modal profissional com:
+ * - Botão de copiar template
+ * - Botão de fechar
+ * - Validação de cópia
+ * - Feedback visual
+ */
+
+showSuccessModal(userData) {
     const expirationDate = Utils.calculateExpirationDate(userData.plan);
     const expirationText = expirationDate ?
         Utils.formatDateShort(expirationDate) :
@@ -1082,163 +1158,175 @@ class AdminPanel {
     
     const planName = ACCESS_PLANS[userData.plan]?.name || userData.plan;
     
-    const template = `
-Acesso robô Diom Aviator
+    // Template de acesso formatado
+    const template = `Acesso robô Diom Aviator 
 ╭━━•𖧹꧁᭼⸼◍ཻꢀ᮪⸱ᨗᨗᨗ🛸⸱ᨗᨗᨗꢀ᮪ཻ◍⸼᭼꧂𖧹•━━╮
-•📧 E-mail: ${userData.email}
-•🗝️ Senha: ${userData.password}
-•📊 Acesso: ${planName}
-•🕒 Expira: ${expirationText}
-•🌐 Site: https://diom-aviator.site
+📧 E-mail: ${userData.email}
+🗝️ Senha: ${userData.password}
+📊 Acesso: ${planName}
+🕒 Expira: ${expirationText}
+🌐 Site: https://diom-aviator.site
 ╰━━•𖧹꧁᭼⸼◍ཻꢀ᮪⸱ᨗᨗᨗ🛸⸱ᨗᨗᨗꢀ᮪ཻ◍⸼᭼꧂𖧹•━━╯
 Obrigada✅❤️`;
-    
-    // Criar ou atualizar modal
-    let modal = document.getElementById('success-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'success-modal';
-        modal.className = 'success-modal';
-        modal.innerHTML = `
-            <div class="modal-content hidden">
-                <div class="modal-header">
-                    <h3>
-                        <i class="fas fa-check-circle text-green-500"></i>
-                        Usuário Cadastrado!
-                                            <button class="modal-close" id="modal-close-btn">
-                    close×</button>
-                    </h3>
 
-                </div>
-                <div class="modal-body">
-                    <div class="user-template" id="user-template-content"></div>
-                    <button class="btn btn-primary w-full mt-4" id="modal-close-bt">
-                        <i class="fas fa-copy"></i>
-                        Copiar Template
-                    </button>
-                </div>
+    // Criar HTML do modal com SweetAlert2
+    const htmlContent = `
+        <div style="text-align: left; background-color: var(--bg-card); padding: 20px; border-radius: 8px;">
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: var(--text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.5em;"></i>
+                    Usuário Cadastrado com Sucesso!
+                </h4>
+                <p style="color: var(--text-secondary); font-size: 0.9em; margin: 0;">
+                    Copie o template abaixo e envie ao usuário
+                </p>
             </div>
-        `;
-        document.body.appendChild(modal);
-        
-        // Configurar eventos do modal
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                this.closeSuccessModal();
-            }
-        });
-        
-        // Botão de fechar
-        document.getElementById('modal-close-btn').addEventListener('click', () => {
             
-            this.closeSuccessModal()
-        
-        });
-        
-        // Botão de copiar
-        document.getElementById('copy-template-btn').addEventListener('click', () => {
-            this.copyTemplateToClipboard();
-        });
-    }
-    
-    // Atualizar conteúdo
-    const templateContent = document.getElementById('user-template-content');
-    if (templateContent) {
-        templateContent.textContent = template;
-    }
-    
-    // Resetar botão copiar
-    const copyBtn = document.getElementById('copy-template-btn');
-    if (copyBtn) {
-        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar Template';
-        copyBtn.style.background = '';
-        copyBtn.style.borderColor = '';
-        copyBtn.disabled = false;
-    }
-    
-    // Mostrar modal
-    modal.classList.add('active');
-}
+            <div style="background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 0.85em; color: var(--text-primary); white-space: pre-wrap; word-break: break-word; max-height: 300px; overflow-y: auto;" id="template-display">
+${template}
+            </div>
+            
+            <div style="display: flex; gap: 10px; flex-direction: column;">
+                <button id="copy-btn" style="
+                    width: 100%;
+                    padding: 10px 15px;
+                    background-color: #3b82f6;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    transition: all 0.3s ease;
+                    font-size: 0.95em;
+                ">
+                    <i class="fas fa-copy"></i> Copiar Template
+                </button>
+                
+                <button id="close-btn" style="
+                    width: 100%;
+                    padding: 10px 15px;
+                    background-color: var(--bg-input);
+                    color: var(--text-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: 6px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    transition: all 0.3s ease;
+                    font-size: 0.95em;
+                ">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    `;
 
-    closeSuccessModal() {
-    const modal = document.getElementById('success-modal');
-    if (modal) {
-        modal.classList.remove('active');
-        
-        // Resetar botão de copiar
-        const copyBtn = document.getElementById('copy-template-btn');
-        if (copyBtn) {
-            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar Template';
-            copyBtn.style.background = '';
-            copyBtn.style.borderColor = '';
-        }
-    }
-}
-    copyTemplateToClipboard() {
-    const templateContent = document.getElementById('user-template-content');
-    if (!templateContent) return;
-    
-    const text = templateContent.textContent;
-    const copyBtn = document.getElementById('copy-template-btn');
-    
-    // Tentar usar Clipboard API
-    navigator.clipboard.writeText(text).then(() => {
-        // Sucesso
-        if (copyBtn) {
-            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado! Fechando...';
-            copyBtn.style.background = 'var(--accent-green)';
-            copyBtn.disabled = true;
-            
-            // Fechar modal após 1.5 segundos
-            setTimeout(() => {
-                this.closeSuccessModal();
-                Utils.showMessage('Template copiado com sucesso!', 'success');
-            }, 1500);
-        }
-    }).catch(err => {
-        console.error('Erro ao copiar:', err);
-        
-        // Fallback para método antigo
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
-        document.body.appendChild(textArea);
-        textArea.select();
-        
-        try {
-            const successful = document.execCommand('copy');
-            if (successful && copyBtn) {
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado! Fechando...';
-                copyBtn.style.background = 'var(--accent-green)';
-                copyBtn.disabled = true;
-                
-                setTimeout(() => {
-                    this.closeSuccessModal();
-                    Utils.showMessage('Template copiado com sucesso!', 'success');
-                }, 1500);
-            } else {
-                // Se não conseguir copiar, permitir seleção manual
-                textArea.style.opacity = '1';
-                textArea.style.position = 'fixed';
-                textArea.style.top = '50%';
-                textArea.style.left = '50%';
-                textArea.style.transform = 'translate(-50%, -50%)';
-                textArea.style.zIndex = '99999';
-                textArea.style.background = 'white';
-                textArea.style.color = 'black';
-                textArea.style.padding = '20px';
-                textArea.style.border = '2px solid #3b82f6';
-                
-                alert('Selecione o texto e copie manualmente (Ctrl+C)');
+    // Mostrar SweetAlert2
+    Swal.fire({
+        title: '✅ Sucesso!',
+        html: htmlContent,
+        icon: 'success',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        background: 'var(--bg-card)',
+        color: 'var(--text-primary)',
+        width: '600px',
+        didOpen: (modal) => {
+            // Botão Copiar
+            const copyBtn = document.getElementById('copy-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', async () => {
+                    try {
+                        // Copiar para clipboard
+                        await navigator.clipboard.writeText(template);
+                        
+                        // Feedback visual
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado com Sucesso!';
+                        copyBtn.style.backgroundColor = '#10b981';
+                        copyBtn.disabled = true;
+                        
+                        // Mostrar mensagem de sucesso
+                        Utils.showMessage('Template copiado com sucesso!', 'success');
+                        
+                        // Voltar ao estado normal após 2 segundos
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar Template';
+                            copyBtn.style.backgroundColor = '#3b82f6';
+                            copyBtn.disabled = false;
+                        }, 2000);
+                        
+                    } catch (err) {
+                        console.error('Erro ao copiar:', err);
+                        
+                        // Fallback: usar método antigo
+                        try {
+                            const textArea = document.createElement('textarea');
+                            textArea.value = template;
+                            textArea.style.position = 'fixed';
+                            textArea.style.opacity = '0';
+                            document.body.appendChild(textArea);
+                            textArea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textArea);
+                            
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado com Sucesso!';
+                            copyBtn.style.backgroundColor = '#10b981';
+                            copyBtn.disabled = true;
+                            
+                            Utils.showMessage('Template copiado com sucesso!', 'success');
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar Template';
+                                copyBtn.style.backgroundColor = '#3b82f6';
+                                copyBtn.disabled = false;
+                            }, 2000);
+                            
+                        } catch (fallbackErr) {
+                            console.error('Erro no fallback:', fallbackErr);
+                            Utils.showMessage('Erro ao copiar. Selecione e copie manualmente.', 'error');
+                        }
+                    }
+                });
             }
-        } finally {
-            setTimeout(() => {
-                document.body.removeChild(textArea);
-            }, 2000);
+            
+            // Botão Fechar
+            const closeBtn = document.getElementById('close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    Swal.close();
+                });
+            }
         }
     });
 }
+
+/**
+ * Função auxiliar para fechar o modal de sucesso
+ */
+closeSuccessModal() {
+    Swal.close();
+}
+
+/**
+ * Função auxiliar para copiar template
+ */
+copyTemplateToClipboard(template) {
+    navigator.clipboard.writeText(template).then(() => {
+        Utils.showMessage('Template copiado com sucesso!', 'success');
+    }).catch(err => {
+        console.error('Erro ao copiar:', err);
+        Utils.showMessage('Erro ao copiar. Tente novamente.', 'error');
+    });
+}
+
     async editUserName(user) {
         const { value: newName } = await Swal.fire({
             title: 'Editar Nome',
@@ -1438,11 +1526,11 @@ Obrigada✅❤️`;
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+                    <div class="bg-gray-500 dark:bg-gray-800 p-3 rounded-lg">
                         <p class="text-sm text-gray-300 dark:text-gray-400">ID do Sistema</p>
                         <p class="font-mono text-sm">${user._id}</p>
                     </div>
-                    <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+                    <div class="bg-gray-500 dark:bg-gray-800 p-3 rounded-lg">
                         <p class="text-sm text-gray-300 dark:text-gray-400">Origem</p>
                         <p class="font-medium">${user._node}</p>
                     </div>
@@ -1475,7 +1563,7 @@ Obrigada✅❤️`;
                 
                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                     <p class="text-sm text-gray-300 dark:text-gray-400">
-                        Firebase UID: <code class="text-xs">${user.firebaseUid || 'Não disponível'}</code>
+                     UID: <code class="text-xs">${user.firebaseUid || 'Não disponível'}</code>
                     </p>
                 </div>
             </div>
