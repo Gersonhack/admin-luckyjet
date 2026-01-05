@@ -162,7 +162,7 @@ class AdminPanel {
     
     // Mostrar mensagem de boas-vindas
     setTimeout(() => {
-        Utils.showMessage(`Bem-vindo, ${this.currentAdmin.email}`, 'success');
+        Utils.showMessage(`Bem-vindo, ADMIN`, 'success')
     }, 500);
 }
 
